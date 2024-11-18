@@ -1,53 +1,46 @@
 <?php
+// Start session for login state
 session_start();
 
-// Check if the form is submitted
+// Database connection
+$host = 'localhost';
+$db = 'sales_system';
+$user = 'root';  // Use your actual database username
+$pass = '';  // Use your actual database password
+
+$conn = new mysqli($host, $user, $pass, $db);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Database connection
-    $servername = "localhost"; // Use your database host
-    $username = "root";        // Database username (usually root)
-    $password = "";            // Database password (usually empty for local dev)
-    $dbname = "sales_system";    // Your database name
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
-    // Get the form data
+    // Retrieve form data
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Query to find the user
-    $sql = "SELECT * FROM users WHERE email='$email'";
-    $result = $conn->query($sql);
-
+    // Check if user exists
+    $query = "SELECT * FROM users WHERE email = '$email'";
+    $result = $conn->query($query);
+    
     if ($result->num_rows > 0) {
-        // Fetch the user data
         $user = $result->fetch_assoc();
-
-        // Verify the password
+        
+        // Verify password
         if (password_verify($password, $user['password'])) {
-            // Password is correct, start a session
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
-            echo "Login successful! Welcome, " . $_SESSION['username'];
-            // Redirect to the home page (or any other page)
-            header("Location: home.php");
-            exit;
+            header("Location: index.php"); // Redirect to the home page after successful login
         } else {
-            echo "Invalid password!";
+            $error_message = "Invalid password!";
         }
     } else {
-        echo "No user found with that email address!";
+        $error_message = "No account found with this email!";
     }
-
-    // Close the connection
-    $conn->close();
 }
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -56,14 +49,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - ReJo Sales</title>
-    <style>
-        /* Your login form styling goes here */
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="signup.html">Sign Up</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <div class="login-container">
-        <h2>Welcome Back!</h2>
-        <p>Login to access your ReJo Sales account.</p>
+        <h2>Login to Your Account</h2>
+
+        <?php if (isset($error_message)) { echo "<p class='error'>$error_message</p>"; } ?>
+
         <form action="login.php" method="POST">
             <div class="form-group">
                 <label for="email">Email:</label>
@@ -75,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
             <button type="submit" class="login-btn">Login</button>
         </form>
-        <a href="signup.php" class="signup-link">Don't have an account? Signup</a>
+        <p>Don't have an account? <a href="signup.php">Sign up here</a></p>
     </div>
 </body>
 </html>
