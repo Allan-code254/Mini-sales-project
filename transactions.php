@@ -1,26 +1,32 @@
 <?php
-session_start();
-require 'db.php';
+// Fetch transactions from the database
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "sales_system";
 
-// Check if the user is logged in
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit();
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Process the form data if submitted
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $product = mysqli_real_escape_string($conn, $_POST['product']);
-    $amount = mysqli_real_escape_string($conn, $_POST['amount']);
-    $date = mysqli_real_escape_string($conn, $_POST['date']);
-    $type = mysqli_real_escape_string($conn, $_POST['type']);
+$sql = "SELECT * FROM transactions ORDER BY sale_date DESC";
+$result = $conn->query($sql);
 
-    $query = "INSERT INTO transactions (product, amount, date, type) VALUES ('$product', '$amount', '$date', '$type')";
-    mysqli_query($conn, $query);
+$total_sales = 0;
+$total_profit = 0;
+
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $total_sales += $row['total_sales'];
+        $total_profit += $row['total_profit'];
+    }
+} else {
+    echo "No transactions found.";
 }
 
-// Fetch all transactions from the database
-$transactions = mysqli_query($conn, "SELECT * FROM transactions ORDER BY date DESC");
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -29,151 +35,98 @@ $transactions = mysqli_query($conn, "SELECT * FROM transactions ORDER BY date DE
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transactions - ReJo Sales</title>
-    <style>
-        /* Reset and basic styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f3f4f6;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem;
-        }
-
-        /* Container for transactions */
-        .transaction-container {
-            width: 80%;
-            max-width: 900px;
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        /* Form styles */
-        .transaction-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .transaction-form input, .transaction-form select, .transaction-form button {
-            flex: 1;
-            padding: 0.75rem;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .transaction-form button {
-            background-color: #3b82f6;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .transaction-form button:hover {
-            background-color: #2563eb;
-        }
-
-        /* Table styles */
-        .transaction-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .transaction-table th, .transaction-table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .transaction-table th {
-            background-color: #3b82f6;
-            color: #fff;
-            font-weight: bold;
-        }
-
-        .transaction-table tr:nth-child(even) {
-            background-color: #f9fafb;
-        }
-
-        /* Button to delete */
-        .delete-btn {
-            padding: 0.5rem 1rem;
-            color: #fff;
-            background-color: #e53e3e;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .delete-btn:hover {
-            background-color: #c53030;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="transaction-container">
-        <h2>Transactions</h2>
-        
-        <!-- Form to add a transaction -->
-        <form action="transactions.php" method="POST" class="transaction-form">
-            <input type="text" name="product" placeholder="Product Name" required>
-            <input type="number" name="amount" placeholder="Amount" required>
-            <input type="date" name="date" required>
-            <select name="type" required>
-                <option value="" disabled selected>Type</option>
-                <option value="sale">Sale</option>
-                <option value="purchase">Purchase</option>
-            </select>
-            <button type="submit">Add Transaction</button>
-        </form>
+    <section id="header">
+        <a href="#"><img src="img/logo.png" class="logo" alt=""></a>
+        <div>
+            <ul id="navbar">
+                <li><a href="index.php">Home</a></li>
+                <li><a href="shop.php">Shop</a></li>
+                <li><a href="about.php">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="cart.php">Cart</a></li>
+                <li><a class="active" href="transactions.php">Transactions</a></li>
+                <li><a href="signup.php" class="auth-link">Signup</a></li>
+                <li><a href="login.php" class="auth-link">Login</a></li>
+                <li><a href="logout.php">Logout</a></li>
+            </ul>
+        </div>
+    </section>
 
-        <!-- Table to display transactions -->
-        <table class="transaction-table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Product</th>
-                    <th>Amount</th>
-                    <th>Type</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while ($row = mysqli_fetch_assoc($transactions)) : ?>
+    <main>
+        <section class="transactions-section">
+            <h2>Transaction History</h2>
+            <table class="transactions-table">
+                <thead>
                     <tr>
-                        <td><?php echo htmlspecialchars($row['date']); ?></td>
-                        <td><?php echo htmlspecialchars($row['product']); ?></td>
-                        <td><?php echo htmlspecialchars($row['amount']); ?></td>
-                        <td><?php echo htmlspecialchars($row['type']); ?></td>
-                        <td>
-                            <form action="delete_transaction.php" method="POST" style="display:inline;">
-                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                <button type="submit" class="delete-btn">Delete</button>
-                            </form>
-                        </td>
+                        <th>Date</th>
+                        <th>Total Sales</th>
+                        <th>Total Profit</th>
                     </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) {
+                            echo "<tr>
+                                    <td>{$row['sale_date']}</td>
+                                    <td>" . number_format($row['total_sales'], 2) . "</td>
+                                    <td>" . number_format($row['total_profit'], 2) . "</td>
+                                  </tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='3'>No transactions found.</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+
+            <!-- Display Pie Chart -->
+            <div class="chart-container" style="width: 50%; margin: 0 auto; padding-top: 2rem;">
+                <canvas id="transactionsPieChart"></canvas>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        // Pie Chart data
+        const data = {
+            labels: ['Total Sales', 'Total Profit'],
+            datasets: [{
+                data: [<?php echo $total_sales; ?>, <?php echo $total_profit; ?>],
+                backgroundColor: ['#36a2eb', '#ff6384'],
+                hoverOffset: 4
+            }]
+        };
+
+        const config = {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': Ksh.' + tooltipItem.raw.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Create the pie chart
+        var ctx = document.getElementById('transactionsPieChart').getContext('2d');
+        new Chart(ctx, config);
+    </script>
 </body>
 </html>

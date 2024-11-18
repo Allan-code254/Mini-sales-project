@@ -11,14 +11,15 @@
         <a href="#"><img src="img/logo.png" class="logo" alt=""></a>
         <div>
             <ul id="navbar">
-                <li><a href="index.html">Home</a></li>
+                <li><a href="index.php">Home</a></li>
                 <li><a class="active" href="shop.php">Shop</a></li>
-                <li><a href="about.html">About</a></li>
+                <li><a href="about.php">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><a href="cart.html">Cart</a></li>
-                <li><a href="transactions.html">Transactions</a></li>
-                <li><a href="signup.html" class="auth-link">Signup</a></li>
-                <li><a href="login.html" class="auth-link">Login</a></li>
+                <li><a href="cart.php">Cart</a></li>
+                <li><a href="transactions.php">Transactions</a></li>
+                <li><a href="signup.php" class="auth-link">Signup</a></li>
+                <li><a href="login.php" class="auth-link">Login</a></li>
+                <li><a href="logout.php">Logout</a></li>
             </ul>
         </div>
     </section>
@@ -45,13 +46,19 @@
 
             if ($result->num_rows > 0) {
                 // Display each product
-                while($row = $result->fetch_assoc()) {
+                while ($row = $result->fetch_assoc()) {
                     echo "<div class='product'>
-                            <img src='" . $row['img/products'] . "' alt='" . $row['name'] . "'>
+                            <img src='" . $row['image_path'] . "' alt='" . $row['name'] . "'>
                             <h3>" . $row['name'] . "</h3>
                             <p>" . $row['description'] . "</p>
-                            <p>$" . $row['price'] . "</p>
-                            <button>Add to Cart</button>
+                            <p>Ksh " . $row['price'] . "</p>
+                            <form method='POST' action='cart.php'>
+                                <input type='hidden' name='product_id' value='" . $row['id'] . "'>
+                                <input type='hidden' name='product_name' value='" . $row['name'] . "'>
+                                <input type='hidden' name='product_price' value='" . $row['price'] . "'>
+                                <input type='hidden' name='product_image' value='" . $row['image_path'] . "'>
+                                <button type='submit'>Add to Cart</button>
+                            </form>
                           </div>";
                 }
             } else {

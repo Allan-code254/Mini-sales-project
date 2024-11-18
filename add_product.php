@@ -25,7 +25,7 @@ if (isset($_POST['submit'])) {
     $image_temp = $_FILES['image']['tmp_name'];
 
     // Define the upload directory
-    $upload_directory = "uploads/";  // Folder to store images
+    $upload_directory = "products/";  // Folder to store images
 
     // Create the upload folder if it doesn't exist
     if (!is_dir($upload_directory)) {

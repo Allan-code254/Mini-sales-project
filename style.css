@@ -186,6 +186,92 @@ footer .copyright{
 /* Single Product */
 
 
+
+
+
+
+
+
+/* General container styling */
+.products-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Individual product card */
+.product {
+    width: 200px; /* Adjust width as needed */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background-color: #fff;
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Image styling for passport-sized appearance */
+.product img {
+    width: 100%;
+    height: 180px; /* Fixed height for uniform size */
+    object-fit: cover; /* Ensures the image is cropped to fit the box */
+    border-radius: 5px;
+}
+
+/* Product title styling */
+.product h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin: 10px 0 5px;
+}
+
+/* Product description styling */
+.product p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 5px 0;
+}
+
+/* Price styling */
+.product p:last-of-type {
+    font-size: 1rem;
+    color: #3b82f6;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Button styling */
+.product button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #3b82f6;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.product button:hover {
+    background-color: #2563eb;
+}
+
+
+
+
+
+
+
+
 /* About Page */
 
 /* Wallpaper Background for About Section */
@@ -396,4 +482,74 @@ footer .copyright{
 
 #checkout-btn:hover {
     background: #1a5bcc;
+}
+
+
+/* Signup & Login Pages */
+.signup-container {
+    max-width: 400px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.signup-container h2 {
+    text-align: center;
+    font-size: 1.8em;
+    color: #333;
+}
+
+.signup-container p {
+    text-align: center;
+    color: #666;
+    font-size: 1em;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.form-group input:focus {
+    border-color: #3b82f6;
+}
+
+.signup-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+.signup-btn:hover {
+    background-color: #2563eb;
+}
+
+.login-link {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.login-link:hover {
+    text-decoration: underline;
 }

@@ -17,14 +17,15 @@
         <a href="#"><img src="img/logo.png" class="logo" alt=""></a>
         <div>
             <ul id="navbar">
-                <li><a class="active" href="index.html">Home</a></li>
+                <li><a class="active" href="index.php">Home</a></li>
                 <li><a href="shop.php">Shop</a></li>
-                <li><a href="about.html">About</a></li>
+                <li><a href="about.php">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><a href="cart.html">Cart</a></li>
-                <li><a href="transactions.html">Transactions</a></li>
-                <li><a href="signup.html" class="auth-link">Signup</a></li>
-                <li><a href="login.html" class="auth-link">Login</a></li>
+                <li><a href="cart.php">Cart</a></li>
+                <li><a href="transactions.php">Transactions</a></li>
+                <li><a href="signup.php" class="auth-link">Signup</a></li>
+                <li><a href="login.php" class="auth-link">Login</a></li>
+                <li><a href="logout.php">Logout</a></li>
             </ul>
         </div>
     </section>

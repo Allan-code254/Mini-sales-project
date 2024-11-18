@@ -35,19 +35,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_SESSION['user_id'] = $user_id;
                 $_SESSION['username'] = $username;
                 
-                // Redirect to the homepage (index.html)
-                header("Location: index.html");
+                // Redirect to the homepage (index.php)
+                header("Location: index.php");
                 exit;
             } else {
                 // Incorrect password
                 $_SESSION['error_message'] = "Incorrect password. Please try again.";
-                header("Location: login.html");
+                header("Location: login.php");
                 exit;
             }
         } else {
             // No user found with the provided email
             $_SESSION['error_message'] = "No user found with this email.";
-            header("Location: login.html");
+            header("Location: login.php");
             exit;
         }
         
@@ -56,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // If the query preparation fails
         $_SESSION['error_message'] = "Error: Could not prepare the query.";
-        header("Location: login.html");
+        header("Location: login.php");
         exit;
     }
 }
