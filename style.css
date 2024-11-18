@@ -114,17 +114,6 @@ body {
 #hero h1{
     color: #1a1a1a;
 }
-#hero button{
-    background-image: url("img/button.png");
-    background-color: transparent;
-    color: #1a1a1a;
-    border: 0;
-    padding: 14px 80px 14px 65px;
-    background-repeat: no-repeat;
-    cursor: pointer
-    font-weight: 700;
-    font-size: 15px;
-}
 
 #product1{
     text-align: center;
@@ -148,17 +137,6 @@ flex-wrap: wrap;
 #product1 .pro img{
 width: 100%;
 border-radius: 20px;
-}
-
-#newsletter{
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    align-items: center;
-    background-image: url("img/banner/b14.png");
-    background-repeat: no-repeat;
-    background-position: 20% 30%;
-    background-color: #041e42;
 }
 
 footer{
@@ -200,71 +178,222 @@ footer .copyright{
     text-align: center;
 }
 /* Shop Page */
-
+footer .copyright{
+    width: 100%;
+    text-align: center;
+}
 
 /* Single Product */
 
 
-/* Blog Page */
-
-
 /* About Page */
 
-/* Cart Page */
-#cart table{
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    white-space: nowrap;
-}
-#cart table img{
-    width: 70px;
-}
-
-#cart table td:nth-child(5){
-    width: 150px;
-    text-align: center;
+/* Wallpaper Background for About Section */
+.wallpaper {
+    background-image: url('img/about.jpg');
+    background-size: cover;
+    background-position: center; /* Centers the image */
+    background-attachment: fixed; /* Parallax effect */
+    color: white; /* Ensures text is readable */
+    padding: 40px 20px; /* Adds space inside the section */
+    border-radius: 8px; /* Optional: Smooth edges */
 }
 
-#cart table td:nth-child(5) input{
-    width: 70px;
-    padding: 10px 5px 10px 15px;
-}
-
-#cart table thead{
-    border: 1px solid #e2e9e1;
-    border-left: none;
-    border-right: none;
-}
-
-#cart table thead td{
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 13px;
-    padding: 18px 0;
-}
-
-#subtotal{
-    width: 50%;
-    margin-bottom: 30px;
-    border: 1px solid #e2e9e1;
-    padding: 30px;
-}
-
-#subtotal table{
-    border-collapse: collapse;
-    width: 100%;
+/* Additional Styling for Text */
+.wallpaper h2 {
+    font-size: 2.5rem;
     margin-bottom: 20px;
 }
 
-#subtotal table td{
-    width: 50px;
-    border: 1px solid #e2e9e1;
-    padding: 10px;
-    font-size: 13px;
+.wallpaper p {
+    font-size: 1.2rem;
+    line-height: 1.8;
 }
-#subtotal button{
-    background-color: #088178;
-    color: #fff;
-    padding: 12px 20px;
+
+
+
+
+/* Contact Section */
+.contact-section {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    background: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contact-section h2 {
+    color: #2575fc;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.contact-section p {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 30px;
+    line-height: 1.8;
+}
+
+/* Contact Container */
+.contact-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+/* Contact Form */
+.contact-form {
+    flex: 1 1 45%;
+    max-width: 500px;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.contact-form button {
+    width: 100%;
+    padding: 10px 20px;
+    background: #2575fc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.contact-form button:hover {
+    background: #1a5bcc;
+}
+
+/* Contact Info */
+.contact-info {
+    flex: 1 1 45%;
+    max-width: 500px;
+    padding: 20px;
+    text-align: left;
+}
+
+.contact-info h3 {
+    margin-bottom: 20px;
+    color: #2575fc;
+}
+
+.contact-info p {
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contact-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .contact-form,
+    .contact-info {
+        flex: 1 1 100%;
+    }
+}
+
+
+/* Cart Page */
+/* Cart Section */
+.cart-section {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cart-section h2 {
+    text-align: center;
+    color: #2575fc;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.cart-section p {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+/* Cart Table */
+.cart-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.cart-table th, .cart-table td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.cart-table th {
+    background: #2575fc;
+    color: white;
+}
+
+.cart-table td {
+    font-size: 1rem;
+    color: #333;
+}
+
+.cart-summary {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.cart-summary h3 {
+    font-size: 1.5rem;
+    color: #2575fc;
+}
+
+.cart-summary p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+#checkout-btn {
+    background: #2575fc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#checkout-btn:hover {
+    background: #1a5bcc;
 }

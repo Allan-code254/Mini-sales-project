@@ -1,24 +1,39 @@
 <?php
-session_start();
-require 'db.php';
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Database connection
+    $servername = "localhost"; // Use your database host
+    $username = "root";        // Database username (usually root)
+    $password = "";            // Database password (usually empty for local dev)
+    $dbname = "sales_system";    // Your database name
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Collect form data and sanitize inputs
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    // Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
 
-    // Insert data into the users table
-    $query = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
-    if (mysqli_query($conn, $query)) {
-        $_SESSION['signup_success'] = "Signup successful! Please log in.";
-        header("Location: login.php");
-        exit();
-    } else {
-        echo "Error: " . mysqli_error($conn);
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
     }
+
+    // Get the data from the form
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash password for security
+
+    // Insert user into the database
+    $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "Signup successful! <a href='login.php'>Login here</a>";
+    } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+
+    // Close the connection
+    $conn->close();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,91 +41,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup - ReJo Sales</title>
     <style>
-        /* Basic reset */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f3f4f6; }
-
-        /* Form container styling */
-        .signup-container {
-            width: 400px;
-            padding: 2rem;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        /* Form elements styling */
-        .signup-container h2 { color: #333; margin-bottom: 1rem; }
-        .signup-container p { color: #666; margin-bottom: 2rem; }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus { border-color: #3b82f6; }
-
-        .signup-btn {
-            width: 100%;
-            padding: 0.75rem;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #fff;
-            background-color: #3b82f6;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .signup-btn:hover { background-color: #2563eb; }
-
-        .login-link {
-            margin-top: 1.5rem;
-            color: #3b82f6;
-            text-decoration: none;
-            font-size: 0.9rem;
-        }
+        /* Your signup form styling goes here */
     </style>
 </head>
 <body>
     <div class="signup-container">
-        <h2>Sign Up to ReJo Sales</h2>
-        <p>Create your account and start managing sales with ease!</p>
-        
+        <h2>Create an Account</h2>
+        <p>Join ReJo Sales to explore exclusive deals and offers.</p>
         <form action="signup.php" method="POST">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
             </div>
-            <button type="submit" class="signup-btn">Sign Up</button>
+            <button type="submit" class="signup-btn">Signup</button>
         </form>
-        <a href="login.php" class="login-link">Already have an account? Log in here.</a>
+        <a href="login.php" class="login-link">Already have an account? Login</a>
     </div>
 </body>
 </html>
