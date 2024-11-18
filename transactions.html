@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions - ReJo Sales</title>
+    <link rel="stylesheet" href="style.css">
+
+    <section id="header">
+        <a href="#"><img src="img/logo.png" class="logo" alt=""></a>
+        <div>
+            <ul id="navbar">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a class="active" href="transactions.html">Transactions</a></li>
+                <li><a href="signup.html" class="auth-link">Signup</a></li>
+                <li><a href="login.html" class="auth-link">Login</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+        .summary div {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 30%;
+            text-align: center;
+        }
+        .summary div h3 {
+            margin: 10px 0;
+            color: #555;
+        }
+        .summary div p {
+            font-size: 24px;
+            color: #333;
+        }
+        canvas {
+            max-width: 100%;
+            margin: 0 auto;
+            display: block;
+        }
+        .transactions-table {
+            margin-top: 40px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .transactions-table th, .transactions-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .transactions-table th {
+            background-color: #3b82f6;
+            color: white;
+        }
+        .transactions-table td {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Transactions Overview</h1>
+
+        <!-- Summary of Transactions -->
+        <div class="summary">
+            <div>
+                <h3>Total Sales</h3>
+                <p>Ksh.120,000</p>
+            </div>
+            <div>
+                <h3>Total Profits</h3>
+                <p>Ksh.30,000</p>
+            </div>
+            <div>
+                <h3>Total Transactions</h3>
+                <p>Ksh.1,200</p>
+            </div>
+        </div>
+
+        <!-- Pie Chart for Financial Data -->
+        <canvas id="financialChart"></canvas>
+
+        <!-- Transaction Records Table -->
+        <table class="transactions-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Transaction Type</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2024-11-10</td>
+                    <td>Sale</td>
+                    <td>Ksh.5000</td>
+                </tr>
+                <tr>
+                    <td>2024-11-12</td>
+                    <td>Profit</td>
+                    <td>Ksh.2000</td>
+                </tr>
+                <tr>
+                    <td>2024-11-14</td>
+                    <td>Sale</td>
+                    <td>Ksh.7500</td>
+                </tr>
+                <tr>
+                    <td>2024-11-16</td>
+                    <td>Profit</td>
+                    <td>Ksh.3000</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Data for the chart
+        const ctx = document.getElementById('financialChart').getContext('2d');
+        const financialChart = new Chart(ctx, {
+            type: 'pie', // You can change this to 'bar' or 'line' for different chart types
+            data: {
+                labels: ['Sales', 'Profits'], // Labels for the chart
+                datasets: [{
+                    label: 'Financial Overview',
+                    data: [120000, 30000], // Replace with dynamic values from your database
+                    backgroundColor: ['#3b82f6', '#22c55e'], // Colors for the pie chart segments
+                    borderColor: ['#2563eb', '#16a34a'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return tooltipItem.label + ': $' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
