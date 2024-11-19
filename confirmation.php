@@ -17,6 +17,7 @@ unset($_SESSION['payment_total']);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Confirmation</title>
     <link rel="stylesheet" href="style.css">
+    <meta http-equiv="refresh" content="3;url=shop.php"> <!-- Redirects to shop.php after 3 seconds -->
 </head>
 <body>
     <section id="header">
@@ -47,7 +48,7 @@ unset($_SESSION['payment_total']);
             <p style="color: red;">Payment Simulation Failed. Please try again.</p>
         <?php endif; ?>
 
-        <a href="shop.php" class="btn">Return to Shop</a>
+        <p>You will be redirected to the shop shortly...</p>
     </div>
 </body>
 </html>

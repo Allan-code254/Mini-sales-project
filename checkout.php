@@ -13,24 +13,11 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Initialize total cart value
+// Calculate total cart value
 $cart_total = 0;
-$total_profit = 0;
-
 if (isset($_SESSION['cart'])) {
     foreach ($_SESSION['cart'] as $item) {
         $cart_total += $item['price'] * $item['quantity'];
-
-        // Fetch the buying price for each product in the cart
-        $stmt = $conn->prepare("SELECT buying_price FROM products WHERE id = ?");
-        $stmt->bind_param("i", $item['id']);
-        $stmt->execute();
-        $stmt->bind_result($buying_price);
-        $stmt->fetch();
-        $stmt->close();
-
-        // Calculate profit (selling price - buying price)
-        $total_profit += ($item['price'] - $buying_price) * $item['quantity'];
     }
 }
 
@@ -40,12 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate phone number
     if (preg_match('/^07[0-9]{8}$/', $phone_number)) {
-        // Get the current date for the sale
+        // Add transaction to the database
         $sale_date = date('Y-m-d');
-
-        // Insert transaction details into the transactions table
-        $stmt = $conn->prepare("INSERT INTO transactions (sale_date, sales, buying_price, profit) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("sddd", $sale_date, $cart_total, $cart_total - $total_profit, $total_profit);
+        $stmt = $conn->prepare("INSERT INTO transactions (sale_date, sales) VALUES (?, ?)");
+        $stmt->bind_param("sd", $sale_date, $cart_total);
 
         if ($stmt->execute()) {
             // Clear cart after successful "payment"
@@ -98,7 +83,6 @@ $conn->close();
 
         <div class="checkout-form">
             <p><strong>Total Amount:</strong> Ksh <?php echo number_format($cart_total, 2); ?></p>
-            <p><strong>Total Profit:</strong> Ksh <?php echo number_format($total_profit, 2); ?></p>
 
             <?php if (isset($error_message)): ?>
                 <p style="color: red;"><?php echo $error_message; ?></p>
