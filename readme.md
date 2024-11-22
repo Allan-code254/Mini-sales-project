@@ -1,4 +1,4 @@
-https://github.com/Allan-code254/ReJoSales
+https://github.com/Allan-code254/Mini-sales-project
 
 ReJo Sales: Online Sales and Finance Management System
 ReJo Sales is a PHP-based online sales system designed to streamline product sales and manage finances efficiently. It features a user-friendly interface for browsing products, adding items to a cart, and completing purchases. Payment options include M-Pesa and Pay on Delivery, with an option to specify delivery time.
