@@ -1,34 +1,29 @@
 <?php
+// Include the database connection
+include 'db.php';
+
+// Start session to check if user is logged in
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
 
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "sales_system";
+// Get the logged-in user's ID
+$user_id = $_SESSION['user_id'];
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch transactions
-$sql = "SELECT sale_date, sales, profit FROM transactions ORDER BY sale_date DESC";
+// Query to fetch transactions for the logged-in user
+$sql = "SELECT sale_date, delivery_time, total_sales, profit, payment_status FROM transactions";
 $result = $conn->query($sql);
 
-// Prepare data for chart
-$sales_data = [];
-$profit_data = [];
-$date_labels = [];
-
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $sales_data[] = $row['sales'];
-        $profit_data[] = $row['profit'];
-        $date_labels[] = date("d-m-Y H:i", strtotime($row['sale_date']));
-    }
-}
+// Initialize totals
+$overall_sales = 0;
+$overall_profit = 0;
 ?>
 
 <!DOCTYPE html>
@@ -40,109 +35,160 @@ if ($result->num_rows > 0) {
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Header styling */
-        #header { display: flex; justify-content: space-between; align-items: center; background-color: #333; color: white; padding: 10px 20px; }
-        #header a { color: white; text-decoration: none; }
-        #navbar { display: flex; list-style: none; }
-        #navbar li { margin: 0 10px; }
-        #navbar a:hover { text-decoration: underline; }
-        .logo { height: 40px; }
-        table { width: 100%; margin: 20px 0; border-collapse: collapse; text-align: center; background-color: #fff; border: 1px solid #ddd; }
-        th, td { padding: 10px; border: 1px solid #ddd; }
-        th { background-color: #f4f4f4; }
-        .chart-container { width: 70%; margin: 30px auto; }
-        .container { max-width: 900px; margin: auto; padding: 20px; }
-        .table-container { text-align: center; }
-        h1, h2 { text-align: center; color: #333; }
+        /* Styling for the table and pie chart */
+        .container {
+            margin: 2rem;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+            color: #333;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Pie Chart Styling */
+        .pie-chart-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .summary {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
     </style>
 </head>
 <body>
-    <section id="header">
-        <a href="index.php"><img src="img/logo.png" class="logo" alt="Logo"></a>
+
+<section id="header">
+    <a href="#"><img src="img/logo.png" class="logo" alt=""></a>
+    <div>
         <ul id="navbar">
             <li><a href="index.php">Home</a></li>
             <li><a href="shop.php">Shop</a></li>
             <li><a href="about.php">About</a></li>
             <li><a href="contact.html">Contact</a></li>
             <li><a href="cart.php">Cart</a></li>
-            <li><a class="active" href="transactions.php">Transactions</a></li>
+            <li><a href="transactions.php" class="active">Transactions</a></li>
             <li><a href="signup.php" class="auth-link">Signup</a></li>
             <li><a href="login.php" class="auth-link">Login</a></li>
             <li><a href="logout.php">Logout</a></li>
         </ul>
-    </section>
+    </div>
+</section>
 
-    <div class="container">
-        <h1>Transaction History</h1>
+<div class="container">
+    <h1>Transactions</h1>
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sale Date</th>
-                        <th>Sales (Ksh)</th>
-                        <th>Profit (Ksh)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($result->num_rows > 0): ?>
-                        <?php foreach ($sales_data as $index => $sales): ?>
-                            <tr>
-                                <td><?php echo $date_labels[$index]; ?></td>
-                                <td><?php echo number_format($sales, 2); ?></td>
-                                <td><?php echo number_format($profit_data[$index], 2); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="3">No transactions found</td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+    <table>
+    <thead>
+        <tr>
+            <th>Sale Date</th>
+            <th>Total Sales</th>
+            <th>Profit</th>
+            <th>Delivery Time</th>
+            <th>Payment Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $overall_sales += $row['total_sales'];
+                $overall_profit += $row['profit'];
+                echo "<tr>
+                        <td>" . date("Y-m-d", strtotime($row['sale_date'])) . "</td>
+                        <td>Ksh " . number_format($row['total_sales'], 2) . "</td>
+                        <td>Ksh " . number_format($row['profit'], 2) . "</td>
+                        <td>" . $row['delivery_time'] . "</td>
+                        <td>" . $row['payment_status'] . "</td>
+                      </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='3'>No transactions found.</td></tr>";
+        }
+        ?>
+        <!-- Display overall totals -->
+        <tr>
+            <td><strong>Total</strong></td>
+            <td><strong>Ksh <?php echo number_format($overall_sales, 2); ?></strong></td>
+            <td><strong>Ksh <?php echo number_format($overall_profit, 2); ?></strong></td>
+        </tr>
+    </tbody>
+</table>
 
-        <h2>Financial Overview</h2>
-        <div class="chart-container">
-            <canvas id="salesChart"></canvas>
-        </div>
+    <!-- Pie chart -->
+    <div class="pie-chart-container">
+        <h3>Sales and Profit Breakdown</h3>
+        <canvas id="salesProfitChart"></canvas>
     </div>
 
-    <script>
-        const ctx = document.getElementById('salesChart').getContext('2d');
-        const salesChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Total Sales', 'Total Profit'],
-                datasets: [{
-                    label: 'Financial Overview',
-                    data: [
-                        <?php echo array_sum($sales_data); ?>, 
-                        <?php echo array_sum($profit_data); ?>
-                    ],
-                    backgroundColor: ['#36A2EB', '#FF6384'],
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                const value = tooltipItem.raw;
-                                return `Ksh ${value.toFixed(2)}`;
-                            }
+    <!-- Summary -->
+    <div class="summary">
+        <p>Total Sales: Ksh <?php echo number_format($overall_sales, 2); ?></p>
+        <p>Total Profit: Ksh <?php echo number_format($overall_profit, 2); ?></p>
+    </div>
+
+</div>
+
+<script>
+    // Pie chart for sales and profit
+    const ctx = document.getElementById('salesProfitChart').getContext('2d');
+    const salesProfitChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Total Sales', 'Total Profit'],
+            datasets: [{
+                data: [<?php echo $overall_sales; ?>, <?php echo $overall_profit; ?>],
+                backgroundColor: ['#4caf50', '#ff9800'],
+                borderColor: ['#fff', '#fff'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': Ksh ' + tooltipItem.raw.toLocaleString();
                         }
                     }
                 }
             }
-        });
-    </script>
+        }
+    });
+</script>
+
 </body>
 </html>
 
-<?php $conn->close(); ?>
+<?php
+$conn->close();
+?>
